@@ -1,34 +1,57 @@
 //Complete the Weather API Backend part using openweathermap api
 
 // Progression 1: Create a function and fetch data using "fetch" from openweathermap api and display the data as given in reference image.
+function getData() {
+  const date = new Date();
+  let currentDate = `${date}`;
 
-var days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const getHeader = document.getElementById('header');
+  const getLocation = document.getElementById('location');
+  const getCurrent = document.getElementById('current');
 
+  fetch(
+    'https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=5b9441056bba2ffb0d1da1631c7fc001'
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      const result = data;
 
-var month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const createInputField = document.createElement('input');
+      createInputField.setAttribute('type', 'text');
+      createInputField.setAttribute('autocomplete', 'on');
+      createInputField.setAttribute('class', 'searchbox');
+      createInputField.setAttribute('placeholder', result.name);
 
+      const createLocation = document.createElement('div');
+      createLocation.setAttribute('class', 'city');
+      createLocation.innerText = result.name + ', ' + result.sys.country;
 
-fetch("https://api.openweathermap.org/data/2.5/weather?q=bengaluru,in&APPID=1342f8dd595eda677ca40143519800de")
-.then((data) => data.json())
-.then((parsedData) => {
-  console.log(parsedData)
-  const nameoflocaion = parsedData.name;
-  document.getElementsByClassName("place-name")[0].textContent = nameoflocaion
+      const createDate = document.createElement('div');
+      createDate.setAttribute('class', 'date');
+      createDate.innerText = currentDate.slice(0, 15);
 
-  const currDate = new Date(parsedData.dt * 1000);
-  document.getElementsByClassName("info")[0].textContent =
-  days[currDate.getDay() - 1] + ' ' + currDate.getDate() + ' ' + month[currDate.getMonth() ] + ' ' + currDate.getFullYear();
- 
-  
+      const createTemp = document.createElement('div');
+      createTemp.setAttribute('class', 'temp');
+      createTemp.innerText = result.main.temp + '°c';
 
-    const currTemp = Math.floor( parsedData.main.temp - 273)
-    document.getElementsByClassName("temperature")[0].textContent = currTemp + '\xBA' + 'c'
+      const createWeather = document.createElement('div');
+      createWeather.setAttribute('class', 'weather');
+      createWeather.innerText = result.weather[0].main;
 
-    const weatherCondition = parsedData.weather[0].main
-    document.getElementsByClassName("condition")[0].textContent = weatherCondition
+      const createMinMaxTemp = document.createElement('div');
+      createMinMaxTemp.setAttribute('class', 'hi-low');
+      createMinMaxTemp.innerText =
+        result.main.temp_max + '°c' + ' / ' + result.main.temp_min + '°c';
 
-    const expectedMaxTemp = Math.floor(parsedData.main.temp_max - 273) 
-    const expectedMinTemp = Math.floor(parsedData.main.temp_min - 273)
-    document.getElementsByClassName("temp-variation")[0].textContent = 
-    expectedMaxTemp + '\xBA' +'/' + expectedMinTemp + '\xBA'
-})
+      getHeader.append(createInputField);
+
+      getLocation.append(createLocation);
+      getLocation.append(createDate);
+
+      getCurrent.append(createTemp);
+      getCurrent.append(createWeather);
+      getCurrent.append(createMinMaxTemp);
+    });
+}
+
+getData();
